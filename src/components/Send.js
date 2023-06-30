@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 
 import '../css/App.css';
 
-const Wallet = () => {
+const Send = () => {
   const [provider, setProvider] = useState(null);
   const [accountAddress, setAccountAddress] = useState('');
   const [recipient, setRecipient] = useState('');
@@ -143,19 +143,8 @@ const fetchLinkedAddress = async () => {
 
   return (
     <div className="wallet-container">
-      <h1>Tik Token Wallet</h1>
-      {!isConnected && <button className="connect-button" onClick={connectToMetaMask}>Connect to MetaMask</button>}
-      {isConnected && (
-        <>
-          <div className="account-address">Connected Account: {accountAddress}</div>
-          <div className="balance">Balance: {balance} TIK</div>
-          <br />
-          <button className="refresh-button" onClick={fetchBalance}>Refresh Balance</button>
-        </>
-      )}
-      <br />
-      <h2>Send Tokens</h2>
-      <label htmlFor="recipient">Handle:</label>
+      <h1>Send TikToken</h1>
+      <label htmlFor="recipient">To:</label>
       <input
         className="recipient-input"
         type="text"
@@ -170,6 +159,16 @@ const fetchLinkedAddress = async () => {
       {linkedAddress && (
         <div className="linked-address">Linked Address: {linkedAddress}</div>
       )}
+      {!isConnected && <button className="connect-button" onClick={connectToMetaMask}>Connect to MetaMask</button>}
+      {isConnected && (
+        <>
+          <div className="account-address">Connected Account: {accountAddress}</div>
+          <div className="balance">Balance: {balance} TIK</div>
+          <br />
+          <button className="refresh-button" onClick={fetchBalance}>Refresh Balance</button>
+        </>
+      )}
+      <br />
       <label htmlFor="amount">Amount:</label>
       <input className="amount-input" type="number" id="amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
       <br />
@@ -178,4 +177,4 @@ const fetchLinkedAddress = async () => {
   );
 };
 
-export default Wallet;
+export default Send;

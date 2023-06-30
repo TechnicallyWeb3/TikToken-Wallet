@@ -60,6 +60,7 @@ const LookUp = () => {
   const handleSendClick = () => {
     const linkedWalletAddress = userInfo?.linkedWallet?.address;
     window.location.href = `/wallet?address=${linkedWalletAddress}`;
+    // window.location.href = `/send?handle=${handle}`;
   };
 
   const handleTransactionsClick = () => {
