@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCopy, faGlobe } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import NavBar from './NavBar';
-
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AppContext } from '../AppContext'; // Import the AppContext
 import '../css/App.css';
+import { getStatic } from 'ethers/lib/utils';
 
 library.add(faCopy, faGlobe);
 
@@ -16,10 +16,18 @@ const formatTransactionValue = (value) => {
 };
 
 
-const LookUp = () => {
+const Profile = () => {
   const baseURL = 'https://identity-resolver-5ywm7t2p3a-pd.a.run.app';
   const defaultHandle = 'technicallyweb3'; // Default handle
-  const [handle, setHandle] = useState(defaultHandle);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const urlHandle = queryParams.get('handle');
+  console.log("Handle:", urlHandle)
+  const handle = urlHandle || defaultHandle; // Use the URL handle if available, otherwise use the default handle
+  const { selfHandle } = useContext(AppContext); // Access selfHandle from AppContext
+  const isSelf = handle === selfHandle;
+  console.log("Self:",selfHandle)
+  console.log(isSelf?"This is you!":"This is someone else.");
   const [userInfo, setUserInfo] = useState({});
   const [balance, setBalance] = useState('Loading balance...');
   const [transactions, setTransactions] = useState([]);
@@ -122,17 +130,21 @@ const LookUp = () => {
 
 
 
+  const fetchUserInfoAndBalance = async () => {
+    await getUserInfo(handle); // Fetch user info with the initial/default handle
+    await displayBalance();
+  };
+
   useEffect(() => {
-  getUserInfo(handle); // Fetch user info with the initial/default handle
-  displayBalance();
-}, [handle]); // Update whenever the handle changes
+    fetchUserInfoAndBalance();
+  }, [handle]);
 
   return (
     <div>
       <header>
       </header>
 
-      <div className="container">
+      <div style={{ padding: '20px' }}>
         <div className="use-avatar">
           <img className="avatar" src={userInfo?.tiktokUser?.avatarURL} alt="User Avatar" />
         </div>
@@ -174,7 +186,6 @@ const LookUp = () => {
             </div>
           </div>
           <p>
-            <span className="label">Bio: </span>
             {userInfo?.tiktokUser?.bio}
           </p>
 <div className="social-icons">
@@ -263,4 +274,4 @@ const LookUp = () => {
 };
 
 export { formatTransactionValue };
-export default LookUp;
+export default Profile;

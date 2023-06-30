@@ -1,28 +1,27 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 
-const SearchBar = () => {
+const SearchBar = ({ showInput, toggleSearchBar }) => {
+
   const [searchText, setSearchText] = useState('');
-  const [showInput, setShowInput] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchHistory, setSearchHistory] = useState([]);
   const [address, setAddress] = useState('');
 
-  const toggleSearchBar = () => {
-    setShowInput(!showInput);
+  const toggleSearch = () => {
     setSearchText('');
-    setAddress('')
+    setAddress('');
+    toggleSearchBar();
   };
 
   const handleSearchClick = () => {
     if (showInput && searchText.trim() !== '') {
-      navigate(`/search?query=${encodeURIComponent(searchText)}`);
+      navigate(`/profile?handle=${encodeURIComponent(searchText)}`);
       setSearchText('');
-      setShowInput(false);
+      toggleSearch()
       updateSearchHistory(searchText);
     } else {
-      setShowInput(!showInput);
+      toggleSearch()
     }
   };
 
@@ -35,9 +34,12 @@ const SearchBar = () => {
         const response = await fetch(`https://identity-resolver-5ywm7t2p3a-pd.a.run.app/user?handle=${value}`);
         const data = await response.json();
         const isRegistered = data['linked-wallet'].isRegistered;
+        const foundHandle = data['tiktok-user'].handle;
         if (isRegistered) {
-          const linkedAddress = data['linked-wallet'].address;
-          showAddress(linkedAddress);
+          if (e.target.value === foundHandle) {
+            const linkedAddress = data['linked-wallet'].address;
+            showAddress(linkedAddress);
+          }
         }
       } catch (error) {
         console.error(error);
@@ -73,16 +75,13 @@ const SearchBar = () => {
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <button
-        onClick={toggleSearchBar}
-        style={{ alignSelf: 'flex-start' }}
-      >
-        {showInput ? 'X' : 'Search'}
-      </button>
-
-      {showInput && (
-        <div style={{ marginLeft: '10px' }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+    <button onClick={toggleSearch} style={{ alignSelf: 'flex-start' }}>
+      {showInput ? 'X' : 'Search'}
+    </button>
+    
+    {showInput && (
+      <div style={{ marginLeft: '10px' }}>
           <form onSubmit={handleSearchClick}>
             <input
               type="text"
