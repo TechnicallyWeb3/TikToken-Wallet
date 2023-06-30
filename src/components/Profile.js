@@ -130,48 +130,7 @@ const LookUp = () => {
   return (
     <div>
       <header>
-        <div className="site-description">
-          <img
-            src="https://technicallyweb3.com/wp-content/uploads/2023/06/cropped-TikToken200.png"
-            alt="TikToken"
-            className="favicon"
-          />
-          
-        </div>
-
-        <div className="social-media">
-          <a href={`https://www.tiktok.com/${handle}`} target="_blank" rel="noopener noreferrer">
-            <i className="fab fa-tiktok"></i>
-          </a>
-          <a href={`https://www.instagram.com/${userInfo?.tiktokUser?.handle}`} target="_blank" rel="noopener noreferrer">
-            <i className="fab fa-instagram"></i>
-          </a>
-          <a href={`https://www.twitter.com/${userInfo?.tiktokUser?.handle}`} target="_blank" rel="noopener noreferrer">
-            <i className="fab fa-twitter"></i>
-          </a>
-          <a href={`https://www.youtube.com/${userInfo?.tiktokUser?.handle}`} target="_blank" rel="noopener noreferrer">
-            <i className="fab fa-youtube"></i>
-          </a>
-        </div>
       </header>
-
-      <br />
-      <br />
-
-      <form onSubmit={(e) => { e.preventDefault(); getUserInfo(handle); }}>
-        <label htmlFor="handleInput">TikTok Handle:</label>
-        <input
-          type="text"
-          id="handleInput"
-          placeholder="Enter TikTok handle"
-          value={handle}
-          onChange={(e) => setHandle(e.target.value)}
-        />
-        <button type="submit">Get Info</button>
-      </form>
-
-      <br />
-      <br />
 
       <div className="container">
         <div className="use-avatar">

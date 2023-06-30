@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './css/App.css';
-import Send from './components/Send';
-import Wallet from './components/Wallet';
-import LookUp from './components/LookUp.js';
+import Profile from './components/Profile';
+import Transact from './components/Transact';
+import Menu from './components/Menu';
+import SearchBar from './components/SearchBar';
 import Transactions from './components/Transactions.js';
 import NavBar from './components/NavBar';
 import MyWallet from './components/MyWallet';
@@ -12,13 +13,11 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <NavBar /> {/* Add the Navbar component */}
+        <SearchBar /> 
+        {/* <Menu /> Add the Navbar component */}
         <Routes>
-          <Route path="/" element={<LookUp />} />
-          <Route path="/send" element={<Send />} />
-          <Route path="/wallet" element={<Wallet />} />
-          <Route path="/txs" element={<Transactions />} />
-          <Route path="/my-wallet" element={<MyWallet />} /> {/* Add the MyWallet component */}
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/transact" element={<Transact />} />
         </Routes>
       </div>
     </Router>
