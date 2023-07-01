@@ -5,7 +5,6 @@ import { faCopy, faGlobe } from '@fortawesome/free-solid-svg-icons';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AppContext } from '../AppContext'; // Import the AppContext
 import '../css/App.css';
-import { getStatic } from 'ethers/lib/utils';
 
 library.add(faCopy, faGlobe);
 
@@ -66,9 +65,9 @@ const Profile = () => {
   };
 
   const handleSendClick = () => {
-    const linkedWalletAddress = userInfo?.linkedWallet?.address;
-    window.location.href = `/wallet?address=${linkedWalletAddress}`;
-    // window.location.href = `/send?handle=${handle}`;
+    // const linkedWalletAddress = userInfo?.linkedWallet?.address;
+    // window.location.href = `/wallet?address=${linkedWalletAddress}`;
+    window.location.href = `/send?to=${handle}`;
   };
 
   const handleTransactionsClick = () => {

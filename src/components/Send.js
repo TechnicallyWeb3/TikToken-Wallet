@@ -1,19 +1,49 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { ethers } from 'ethers';
 import abi from '../abi/abi.json';
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
 
-import '../css/App.css';
+function Send() {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const to = queryParams.get('to');
 
-const Send = () => {
-  const [provider, setProvider] = useState(null);
-  const [accountAddress, setAccountAddress] = useState('');
-  const [recipient, setRecipient] = useState('');
-  const [linkedAddress, setLinkedAddress] = useState('');
-  const [amount, setAmount] = useState('');
-  const [balance, setBalance] = useState('');
+  const baseURL = 'https://identity-resolver-5ywm7t2p3a-pd.a.run.app';
+
   const [isConnected, setIsConnected] = useState(false);
+  const [provider, setProvider] = useState(null);
   const [networkId, setNetworkId] = useState('');
+  const [balance, setBalance] = useState(0.00001);
+  const [sender, setSender] = useState({});
+  const [recipient, setRecipient] = useState({});
+  const [amount, setAmount] = useState('');
+  const [transaction, setTransaction] = useState({});
+
+  const toInputRef = useRef(null);
+
+  const fetchRecipientInformation = () => {
+    const apiUrl = `${baseURL}/user?handle=${to}`;
+
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const tiktokUser = data['tiktok-user'];
+        const linkedWallet = data['linked-wallet'];
+
+        setRecipient({
+          tiktokUser,
+          linkedWallet
+        });
+      })
+      .catch((error) => {
+        console.log('Error fetching user information:', error);
+      });
+  };
 
   const switchToPolygonNetwork = async () => {
     try {
@@ -31,6 +61,24 @@ const Send = () => {
     }
   };
 
+  const fetchSenderBalance = async (address) => {
+    if (provider && isConnected) {
+      try {
+        const contractAddress = '0x359c3AD611e377e050621Fb3de1C2f4411684E92';
+        const contract = new ethers.Contract(contractAddress, abi, provider);
+
+        // Fetch balance using balanceOf function
+        console.log("Fetching balance for ", address)
+        const balanceRaw = await contract.balanceOf(address);
+        const balanceFormatted = ethers.utils.formatUnits(balanceRaw, 18);
+        console.log("Balance", balanceFormatted)
+        return balanceFormatted || 0;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   useEffect(() => {
     const initializeProvider = async () => {
       // Check if MetaMask is installed
@@ -42,139 +90,147 @@ const Send = () => {
 
         // Check if already connected to MetaMask
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-        const address = accounts[0];
-        if (address) {
-          setAccountAddress(address);
+        const senderAddress = accounts[0];
+        if (senderAddress) {
           setIsConnected(true);
-          await fetchBalance(); // Fetch balance once connected
+          console.log("Connected", senderAddress)
+          const senderBalance = await fetchSenderBalance(senderAddress);
+          setSender({
+            address: senderAddress,
+            balance: senderBalance
+          });
+          console.log("Sender", sender);
         }
 
         // Check the network ID and handle network switch/addition
         const networkId = await window.ethereum.request({ method: 'eth_chainId' });
         setNetworkId(networkId);
         if (networkId !== '0x89') { // Network ID for Polygon (change it if using a different network)
-          switchToPolygonNetwork();
+          await switchToPolygonNetwork(); // Await the network switching function
         }
       }
     };
 
-    
-    const fetchBalancePeriodically = async () => {
-      await fetchBalance(); // Initial fetch
-
-      // Start interval to fetch balance periodically
-      const intervalId = setInterval(fetchBalance, 10000); // Adjust the interval time (in milliseconds) as desired (e.g., 10000 for every 10 seconds)
-      console.log("Updating balance")
-      // Clear the interval when the component is unmounted
-      return () => {
-        clearInterval(intervalId);
-      };
-    };
-
-    initializeProvider();
-    fetchBalancePeriodically();
-
-  }, []);
-
-  const connectToMetaMask = async () => {
-    try {
-      // Request account access from MetaMask
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-      const address = accounts[0];
-      setAccountAddress(address);
-      setIsConnected(true);
-      await fetchBalance(); // Fetch balance once connected
-
-      // Check the network ID and handle network switch/addition
-      const checkNetwork = async () => {
-      const networkId = await window.ethereum.request({ method: 'eth_chainId' });
-      setNetworkId(networkId);
-      if (networkId !== '0x89') { // Network ID for Polygon (137 in decimal)
-        switchToPolygonNetwork();
+    const updateSenderBalance = async () => {
+      if (isConnected) {
+        console.log("Updating Sender balance");
+        const senderBalance = await fetchSenderBalance(sender.address);
+        setSender(prevSender => ({
+          ...prevSender,
+          balance: senderBalance
+        }));
+        setBalance(senderBalance)
       }
     };
 
-    checkNetwork();
-
-    } catch (error) {
-      console.error(error);
+    if (to) {
+      fetchRecipientInformation();
     }
+
+    if (isConnected) {
+      updateSenderBalance();
+    }
+
+    initializeProvider();
+
+    // Fetch sender balance every 10 seconds
+    const interval = setInterval(updateSenderBalance, 10000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, [to, isConnected, sender.address]);
+
+  const handleConnect = () => {
+    setIsConnected(true);
+    console.log(transaction);
   };
 
   const sendTokens = async () => {
-  if (provider && amount && recipient) {
-    try {
-      const signer = provider.getSigner();
-      const contractAddress = '0x359c3AD611e377e050621Fb3de1C2f4411684E92';
-      const contract = new ethers.Contract(contractAddress, abi, signer);
-
-      // Convert the amount to a BigNumber
-      const amountInWei = ethers.utils.parseUnits(amount, 18); // Adjust the decimal places as per your token's configuration
-
-      // Send tokens
-      await contract.transfer(recipient, amountInWei);
-      console.log('Tokens sent successfully!');
-    } catch (error) {
-      console.error(error);
-    }
-  }
-};
-
-const fetchLinkedAddress = async () => {
-  setLinkedAddress('');
-};
-
-  const fetchBalance = async () => {
-    if (provider && accountAddress) {
+    if (isConnected && amount && recipient) {
       try {
+        const signer = provider.getSigner();
         const contractAddress = '0x359c3AD611e377e050621Fb3de1C2f4411684E92';
-        const contract = new ethers.Contract(contractAddress, abi, provider);
-
-        // Fetch balance using balanceOf function
-        const balanceRaw = await contract.balanceOf(accountAddress);
-        const balanceFormatted = ethers.utils.formatUnits(balanceRaw, 18); // Adjust the decimal places as per your token's configuration
-        setBalance(balanceFormatted);
+        const contract = new ethers.Contract(contractAddress, abi, signer);
+        
+        const recipientAddress = recipient.linkedWallet.address;
+        // Convert the amount to a BigNumber
+        const amountInWei = ethers.utils.parseUnits(amount, 18); // Adjust the decimal places as per your token's configuration
+        
+        // Send tokens
+        await contract.transfer(recipientAddress, amountInWei);
+        console.log('Tokens sent successfully!');
       } catch (error) {
         console.error(error);
       }
     }
   };
+  const handleSend = (e) => {
+    e.preventDefault();
+
+    sendTokens();
+  };
+
+  const handleLookup = (e) => {
+    e.preventDefault();
+    const toValue = toInputRef.current.value;
+    window.location.href = `/send?to=${toValue}`;
+  };
+
+  const handleAmountChange = (e) => {
+    const newAmount = e.target.value;
+    if (!isNaN(newAmount) && newAmount <= balance) {
+      setAmount(newAmount);
+    }
+  };
+
+  const handleRemoveTo = () => {
+    window.location.href = `/send`;
+  };
 
   return (
-    <div className="wallet-container">
-      <h1>Send TikToken</h1>
-      <label htmlFor="recipient">To:</label>
-      <input
-        className="recipient-input"
-        type="text"
-        id="recipient"
-        value={recipient}
-        onChange={(e) => {
-          setRecipient(e.target.value);
-          setLinkedAddress(''); // Reset linked address when recipient input changes
-        }}
-        onBlur={fetchLinkedAddress} // Fetch linked address when input loses focus
-      />
-      {linkedAddress && (
-        <div className="linked-address">Linked Address: {linkedAddress}</div>
+    <div>
+      <h2>Send TIK</h2>
+      {!to ? (
+        <div>
+          <label htmlFor="toInput">To:</label>
+          <input type="text" id="toInput" ref={toInputRef} />
+          <button type="submit" onClick={handleLookup}>
+            Lookup
+          </button>
+        </div>
+      ) : (
+        <div>
+          <p>
+            To: @{to} <button onClick={handleRemoveTo}>x</button>
+          </p>
+        </div>
       )}
-      {!isConnected && <button className="connect-button" onClick={connectToMetaMask}>Connect to MetaMask</button>}
-      {isConnected && (
-        <>
-          <div className="account-address">Connected Account: {accountAddress}</div>
-          <div className="balance">Balance: {balance} TIK</div>
-          <br />
-          <button className="refresh-button" onClick={fetchBalance}>Refresh Balance</button>
-        </>
+      <div>
+        <label htmlFor="amountInput">Amount:</label>
+        <input
+          type="number"
+          id="amountInput"
+          step="0.000001"
+          min="0"
+          max={balance}
+          value={amount}
+          onChange={handleAmountChange}
+        />
+      </div>
+      {!isConnected ? (
+        <button type="button" onClick={handleConnect} style={{ margin: '50px' }}>
+          Connect
+        </button>
+      ) : (
+        <div>
+          <p>{balance} TIK</p>
+          <button type="submit" onClick={handleSend}>
+            Send
+          </button>
+        </div>
       )}
-      <br />
-      <label htmlFor="amount">Amount:</label>
-      <input className="amount-input" type="number" id="amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
-      <br />
-      {isConnected && <button className="send-button" onClick={sendTokens}>Send</button>}
     </div>
   );
-};
+}
 
 export default Send;

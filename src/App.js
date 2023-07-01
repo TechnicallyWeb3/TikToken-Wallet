@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './css/App.css';
 import { AppProvider } from './AppContext'; // Import the AppProvider from AppContext.js
 import Profile from './components/Profile';
-import Transact from './components/Transact';
+import Send from './components/Send';
 import NavMenu from './components/NavMenu';
 import SearchBar from './components/SearchBar';
 import Landing from './components/Landing';
@@ -53,7 +53,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/transact" element={<Transact />} />
+            <Route path="/send" element={<Send />} />
           </Routes>
         </div>
       </Router>
