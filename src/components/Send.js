@@ -87,7 +87,7 @@ function Send() {
       } else {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         setProvider(provider);
-
+  
         // Check if already connected to MetaMask
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
         const senderAddress = accounts[0];
@@ -101,7 +101,7 @@ function Send() {
           });
           console.log("Sender", sender);
         }
-
+  
         // Check the network ID and handle network switch/addition
         const networkId = await window.ethereum.request({ method: 'eth_chainId' });
         setNetworkId(networkId);
@@ -110,7 +110,7 @@ function Send() {
         }
       }
     };
-
+  
     const updateSenderBalance = async () => {
       if (isConnected) {
         console.log("Updating Sender balance");
@@ -122,27 +122,75 @@ function Send() {
         setBalance(senderBalance)
       }
     };
-
+  
+    const handleAccountsChanged = async (accounts) => {
+      if (accounts.length === 0) {
+        // User disconnected their wallet
+        setIsConnected(false);
+        setSender({});
+      } else {
+        // User switched to a different account
+        const senderAddress = accounts[0];
+        setIsConnected(true);
+        console.log("Connected", senderAddress)
+        const senderBalance = await fetchSenderBalance(senderAddress);
+        setSender({
+          address: senderAddress,
+          balance: senderBalance
+        });
+        console.log("Sender", sender);
+      }
+    };
+  
+    const addAccountsChangedListener = () => {
+      if (window.ethereum) {
+        window.ethereum.on('accountsChanged', handleAccountsChanged);
+      }
+    };
+  
+    const removeAccountsChangedListener = () => {
+      if (window.ethereum && window.ethereum.removeListener) {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      }
+    };
+  
     if (to) {
       fetchRecipientInformation();
     }
-
+  
     if (isConnected) {
       updateSenderBalance();
     }
-
+  
     initializeProvider();
-
+    addAccountsChangedListener();
+  
     // Fetch sender balance every 10 seconds
     const interval = setInterval(updateSenderBalance, 10000);
-
-    // Cleanup interval on component unmount
-    return () => clearInterval(interval);
+  
+    // Cleanup interval and accountsChanged listener on component unmount
+    return () => {
+      clearInterval(interval);
+      removeAccountsChangedListener();
+    };
   }, [to, isConnected, sender.address]);
+  
 
-  const handleConnect = () => {
-    setIsConnected(true);
-    console.log(transaction);
+  const handleConnect = async () => {
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const senderAddress = accounts[0];
+      setIsConnected(true);
+      console.log("Connected", senderAddress)
+      const senderBalance = await fetchSenderBalance(senderAddress);
+      setSender({
+        address: senderAddress,
+        balance: senderBalance
+      });
+      console.log("Sender", sender);
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+    }
   };
 
   const sendTokens = async () => {
@@ -164,9 +212,9 @@ function Send() {
       }
     }
   };
+
   const handleSend = (e) => {
     e.preventDefault();
-
     sendTokens();
   };
 

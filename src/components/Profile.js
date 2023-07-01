@@ -153,18 +153,18 @@ const Profile = () => {
           <div className="user-stats">
             <div className="stat">
               <div>
-                <span className="number">{userInfo?.tiktokUser?.followers}</span>
-              </div>
-              <div>
-                <span className="label">followers</span>
-              </div>
-            </div>
-            <div className="stat">
-              <div>
                 <span className="number">{userInfo?.tiktokUser?.following}</span>
               </div>
               <div>
                 <span className="label">following</span>
+              </div>
+            </div>
+            <div className="stat">
+              <div>
+                <span className="number">{userInfo?.tiktokUser?.followers}</span>
+              </div>
+              <div>
+                <span className="label">followers</span>
               </div>
             </div>
             <div className="stat">
