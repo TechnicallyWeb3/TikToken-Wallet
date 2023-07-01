@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCopy, faGlobe } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import NavBar from './NavBar';
-
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AppContext } from '../AppContext'; // Import the AppContext
 import '../css/App.css';
 
 library.add(faCopy, faGlobe);
@@ -16,10 +15,18 @@ const formatTransactionValue = (value) => {
 };
 
 
-const LookUp = () => {
+const Profile = () => {
   const baseURL = 'https://identity-resolver-5ywm7t2p3a-pd.a.run.app';
   const defaultHandle = 'technicallyweb3'; // Default handle
-  const [handle, setHandle] = useState(defaultHandle);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const urlHandle = queryParams.get('handle');
+  console.log("Handle:", urlHandle)
+  const handle = urlHandle || defaultHandle; // Use the URL handle if available, otherwise use the default handle
+  const { selfHandle } = useContext(AppContext); // Access selfHandle from AppContext
+  const isSelf = handle === selfHandle;
+  console.log("Self:",selfHandle)
+  console.log(isSelf?"This is you!":"This is someone else.");
   const [userInfo, setUserInfo] = useState({});
   const [balance, setBalance] = useState('Loading balance...');
   const [transactions, setTransactions] = useState([]);
@@ -58,9 +65,9 @@ const LookUp = () => {
   };
 
   const handleSendClick = () => {
-    const linkedWalletAddress = userInfo?.linkedWallet?.address;
-    window.location.href = `/wallet?address=${linkedWalletAddress}`;
-    // window.location.href = `/send?handle=${handle}`;
+    // const linkedWalletAddress = userInfo?.linkedWallet?.address;
+    // window.location.href = `/wallet?address=${linkedWalletAddress}`;
+    window.location.href = `/send?to=${handle}`;
   };
 
   const handleTransactionsClick = () => {
@@ -122,58 +129,21 @@ const LookUp = () => {
 
 
 
+  const fetchUserInfoAndBalance = async () => {
+    await getUserInfo(handle); // Fetch user info with the initial/default handle
+    await displayBalance();
+  };
+
   useEffect(() => {
-  getUserInfo(handle); // Fetch user info with the initial/default handle
-  displayBalance();
-}, [handle]); // Update whenever the handle changes
+    fetchUserInfoAndBalance();
+  }, [handle]);
 
   return (
     <div>
       <header>
-        <div className="site-description">
-          <img
-            src="https://technicallyweb3.com/wp-content/uploads/2023/06/cropped-TikToken200.png"
-            alt="TikToken"
-            className="favicon"
-          />
-          
-        </div>
-
-        <div className="social-media">
-          <a href={`https://www.tiktok.com/${handle}`} target="_blank" rel="noopener noreferrer">
-            <i className="fab fa-tiktok"></i>
-          </a>
-          <a href={`https://www.instagram.com/${userInfo?.tiktokUser?.handle}`} target="_blank" rel="noopener noreferrer">
-            <i className="fab fa-instagram"></i>
-          </a>
-          <a href={`https://www.twitter.com/${userInfo?.tiktokUser?.handle}`} target="_blank" rel="noopener noreferrer">
-            <i className="fab fa-twitter"></i>
-          </a>
-          <a href={`https://www.youtube.com/${userInfo?.tiktokUser?.handle}`} target="_blank" rel="noopener noreferrer">
-            <i className="fab fa-youtube"></i>
-          </a>
-        </div>
       </header>
 
-      <br />
-      <br />
-
-      <form onSubmit={(e) => { e.preventDefault(); getUserInfo(handle); }}>
-        <label htmlFor="handleInput">TikTok Handle:</label>
-        <input
-          type="text"
-          id="handleInput"
-          placeholder="Enter TikTok handle"
-          value={handle}
-          onChange={(e) => setHandle(e.target.value)}
-        />
-        <button type="submit">Get Info</button>
-      </form>
-
-      <br />
-      <br />
-
-      <div className="container">
+      <div style={{ padding: '20px' }}>
         <div className="use-avatar">
           <img className="avatar" src={userInfo?.tiktokUser?.avatarURL} alt="User Avatar" />
         </div>
@@ -183,18 +153,18 @@ const LookUp = () => {
           <div className="user-stats">
             <div className="stat">
               <div>
-                <span className="number">{userInfo?.tiktokUser?.followers}</span>
-              </div>
-              <div>
-                <span className="label">followers</span>
-              </div>
-            </div>
-            <div className="stat">
-              <div>
                 <span className="number">{userInfo?.tiktokUser?.following}</span>
               </div>
               <div>
                 <span className="label">following</span>
+              </div>
+            </div>
+            <div className="stat">
+              <div>
+                <span className="number">{userInfo?.tiktokUser?.followers}</span>
+              </div>
+              <div>
+                <span className="label">followers</span>
               </div>
             </div>
             <div className="stat">
@@ -215,7 +185,6 @@ const LookUp = () => {
             </div>
           </div>
           <p>
-            <span className="label">Bio: </span>
             {userInfo?.tiktokUser?.bio}
           </p>
 <div className="social-icons">
@@ -304,4 +273,4 @@ const LookUp = () => {
 };
 
 export { formatTransactionValue };
-export default LookUp;
+export default Profile;

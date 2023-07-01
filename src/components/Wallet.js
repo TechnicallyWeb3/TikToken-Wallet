@@ -13,6 +13,23 @@ const Wallet = () => {
   const [amount, setAmount] = useState('');
   const [balance, setBalance] = useState('');
   const [isConnected, setIsConnected] = useState(false);
+  const [networkId, setNetworkId] = useState('');
+
+  const switchToPolygonNetwork = async () => {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x89' }], // Network ID for Polygon (137 in decimal)
+      });
+      console.log('You have successfully switched to the Polygon network');
+    } catch (switchError) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        console.log('This network is not available in your MetaMask, please add it');
+      }
+      console.log('Failed to switch to the network');
+    }
+  };
 
   useEffect(() => {
     const initializeProvider = async () => {
@@ -31,10 +48,32 @@ const Wallet = () => {
           setIsConnected(true);
           await fetchBalance(); // Fetch balance once connected
         }
+
+        // Check the network ID and handle network switch/addition
+        const networkId = await window.ethereum.request({ method: 'eth_chainId' });
+        setNetworkId(networkId);
+        if (networkId !== '0x89') { // Network ID for Polygon (change it if using a different network)
+          switchToPolygonNetwork();
+        }
       }
     };
 
+    
+    const fetchBalancePeriodically = async () => {
+      await fetchBalance(); // Initial fetch
+
+      // Start interval to fetch balance periodically
+      const intervalId = setInterval(fetchBalance, 10000); // Adjust the interval time (in milliseconds) as desired (e.g., 10000 for every 10 seconds)
+      console.log("Updating balance")
+      // Clear the interval when the component is unmounted
+      return () => {
+        clearInterval(intervalId);
+      };
+    };
+
     initializeProvider();
+    fetchBalancePeriodically();
+
   }, []);
 
   const connectToMetaMask = async () => {
@@ -46,6 +85,18 @@ const Wallet = () => {
       setAccountAddress(address);
       setIsConnected(true);
       await fetchBalance(); // Fetch balance once connected
+
+      // Check the network ID and handle network switch/addition
+      const checkNetwork = async () => {
+      const networkId = await window.ethereum.request({ method: 'eth_chainId' });
+      setNetworkId(networkId);
+      if (networkId !== '0x89') { // Network ID for Polygon (137 in decimal)
+        switchToPolygonNetwork();
+      }
+    };
+
+    checkNetwork();
+
     } catch (error) {
       console.error(error);
     }
@@ -89,7 +140,6 @@ const fetchLinkedAddress = async () => {
       }
     }
   };
-
 
   return (
     <div className="wallet-container">
