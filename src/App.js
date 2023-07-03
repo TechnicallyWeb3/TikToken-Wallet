@@ -7,6 +7,8 @@ import Send from './components/Send';
 import NavMenu from './components/NavMenu';
 import SearchBar from './components/SearchBar';
 import Landing from './components/Landing';
+import Home from './components/Home';
+
 
 function App() {
   const [showInput, setShowInput] = useState(false);
@@ -51,7 +53,8 @@ function App() {
             {!showInput && <NavMenu />}
           </div>
           <Routes>
-            <Route path="/" element={<Landing />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/landing" element={<Landing />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/send" element={<Send />} />
           </Routes>

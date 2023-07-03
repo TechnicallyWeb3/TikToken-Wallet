@@ -84,36 +84,53 @@ function Landing() {
   const appContext = useContext(AppContext);
 
   return (
+
     <div className="landing" style={{ margin: '50px', padding: '50px' }}>
       {!isConnected ? (
         <div>
           <label htmlFor="walletInput" style={{ marginBottom: '5px' }}>
             Connect Web3 Wallet:
           </label>
-          <p style={{ fontSize: '8px' }}>Required to send TIK to a TikTok account.</p>
-          <button type="button" onClick={handleConnectWallet} style={{ width: '100%' }}>
-            Connect Wallet
-          </button>
+          <br/>
+          <br/>
+          <p style={{ fontSize: '15px' }}>Required to send TIK to a TikTok account. To look up user accounts, please use Search or Look-up in the Menu</p>
+<br/>
+<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  <button
+    type="button"
+    onClick={handleConnectWallet}
+  >
+    Connect Wallet
+  </button>
+</div>
+         <br/>
         </div>
       ) : (
         <>
           <div>
+           <br/>
             <label htmlFor="walletInput" style={{ marginBottom: '5px' }}>
               Connected:
             </label>
-            <p style={{ fontSize: '8px' }}>{walletAddress}</p>
+            <p style={{ fontSize: '15px' }}>{walletAddress}</p>
           </div>
-          <button type="button" onClick={() => window.location.href = '/send'} style={{ width: '100%' }}>
+          <br/>
+          <button type="button" onClick={() => window.location.href = '/send'} >
             Send TIK
           </button>
         </>
       )}
 
       <form>
+        <br/>
         <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '50px' }}>
+          <br/>
+<div>
           <label htmlFor="tiktokInput" style={{ marginBottom: '5px' }}>
             Connect TikTok Account:
           </label>
+</div>
+<br/>
           <input
             type="text"
             id="tiktokInput"
@@ -121,11 +138,10 @@ function Landing() {
             value={appContext.tiktokHandle}
             onChange={(e) => setTiktokHandle(e.target.value)}
           />
-          <button type="button" onClick={handleConnectTiktok} style={{ width: '100%' }}>
-            Connect
-          </button>
+
         </div>
       </form>
+ <button type="button" onClick={handleConnectTiktok}>Connect</button>
     </div>
   );
 }

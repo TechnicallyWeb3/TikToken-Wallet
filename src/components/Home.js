@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCopy, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import NavBar from './NavBar';
+
 
 import '../css/App.css';
-import '../css/MyWallet.css';
 
 library.add(faCopy, faGlobe);
 
@@ -17,7 +16,7 @@ const formatTransactionValue = (value) => {
 };
 
 
-const LookUp = () => {
+const Home = () => {
   const baseURL = 'https://identity-resolver-5ywm7t2p3a-pd.a.run.app';
   const defaultHandle = 'technicallyweb3'; // Default handle
   const [handle, setHandle] = useState(defaultHandle);
@@ -61,6 +60,7 @@ const LookUp = () => {
   const handleSendClick = () => {
     const linkedWalletAddress = userInfo?.linkedWallet?.address;
     window.location.href = `/wallet?address=${linkedWalletAddress}`;
+    // window.location.href = `/send?handle=${handle}`;
   };
 
   const handleTransactionsClick = () => {
@@ -129,14 +129,16 @@ const LookUp = () => {
 
   return (
     <div>
-      <header>
-<div className="user-avatar">
+      <br />
+      <br />
+     <h2>TikToken Lookup & Send dApp</h2>
+<br/>
+<br/>
+      <div className="look-container">
+        <div className="use-avatar">
           <img className="avatar" src={userInfo?.tiktokUser?.avatarURL} alt="User Avatar" />
         </div>
-</header>
-
-      <div className="my-wallet-container">
-        <div className="user-profile">
+        <div className="user-details">
           <h2>{userInfo?.tiktokUser?.username}</h2>
           <p>@{userInfo?.tiktokUser?.handle}</p>
           <div className="user-stats">
@@ -191,17 +193,19 @@ const LookUp = () => {
   </a> 
 </div>
           <h2>Wallet Balance</h2>
-          <div className="user-balance">{balance}</div>
-          <br />
-          <button onClick={handleSendClick}>Send TIK</button>
+          <div className="balance">{balance}</div>
+          <br /> 
+<button type="button" onClick={() => window.location.href = '/send'} >
+            Send TIK
+          </button>
         </div>
         <br />
 
         
-<div className="user-transaction-container">
+<div className="transaction-container">
   <h2>Transactions</h2>
   {transactions.length > 0 ? (
-  <div className="user-transaction-container">
+  <div className="transaction-container">
     <table className="transaction-table">
       <thead>
         <tr>
@@ -213,7 +217,7 @@ const LookUp = () => {
       </thead>
       <tbody>
         {transactions.map((transaction) => (
-          <tr className="user-transaction-row" key={transaction.hash}>
+          <tr className="transaction-row" key={transaction.hash}>
             <td>{formatTransactionValue(transaction.value)}</td>
             <td>{new Date(parseInt(transaction.timeStamp) * 1000).toLocaleString()}</td>
             <td>
@@ -263,4 +267,4 @@ const LookUp = () => {
 };
 
 export { formatTransactionValue };
-export default LookUp;
+export default Home;

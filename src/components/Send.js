@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { ethers } from 'ethers';
 import abi from '../abi/abi.json';
 
+import '../css/App.css';
+
 function Send() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -236,11 +238,14 @@ function Send() {
   };
 
   return (
-    <div>
+    <div className="landing" style={{ margin: '50px', padding: '50px' }}>
       <h2>Send TIK</h2>
+      <br />
       {!to ? (
         <div>
           <label htmlFor="toInput">To:</label>
+          <br />
+          <br />
           <input type="text" id="toInput" ref={toInputRef} />
           <button type="submit" onClick={handleLookup}>
             Lookup
@@ -253,8 +258,12 @@ function Send() {
           </p>
         </div>
       )}
+      <br />
+      <br />
       <div>
         <label htmlFor="amountInput">Amount:</label>
+        <br />
+        <br />
         <input
           type="number"
           id="amountInput"
@@ -266,7 +275,7 @@ function Send() {
         />
       </div>
       {!isConnected ? (
-        <button type="button" onClick={handleConnect} style={{ margin: '50px' }}>
+        <button type="button" onClick={handleConnect}>
           Connect
         </button>
       ) : (

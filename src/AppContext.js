@@ -7,12 +7,13 @@ export const AppProvider = ({ children }) => {
 
   function login(handle) {
     setSelfHandle(handle);
-    console.log(selfHandle)
-  } // this code logs "default_login" and not the correct handle.
+    console.log(handle); // Log the updated handle value
+  }
+
   useEffect(() => {
-    console.log(selfHandle);
+    console.log(selfHandle); // Log the updated selfHandle value
     // window.location.href = `/profile?handle=${selfHandle}`;
-  }, [selfHandle]);
+  }, [selfHandle]); // Add selfHandle as a dependency
 
   return (
     <AppContext.Provider value={{ selfHandle, login }}>
