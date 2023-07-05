@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 
 function Landing() {
   const [tiktokHandle, setTiktokHandle] = useState('technicallyweb3');
+  const [wasAlerted, setWasAlerted] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [provider, setProvider] = useState(null);
   const [networkId, setNetworkId] = useState('');
@@ -11,10 +12,16 @@ function Landing() {
 
   const handleConnectWallet = async () => {
     try {
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-      const senderAddress = accounts[0];
-      if(!!senderAddress) window.location.href = `/profile?handle=${tiktokHandle}`;
+      // Check if MetaMask is installed
+      if (typeof window.ethereum === 'undefined') {
+        alert('Please install MetaMask to use this wallet.');
+        setWasAlerted(true)
+      } else {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        const senderAddress = accounts[0];
+        if (!!senderAddress) window.location.href = `/profile?handle=${tiktokHandle}`;
+      }
     } catch (error) {
       console.log('Failed to connect MetaMask wallet:', error);
     }
@@ -39,7 +46,10 @@ function Landing() {
   const initializeProvider = async () => {
     // Check if MetaMask is installed
     if (typeof window.ethereum === 'undefined') {
-      alert('Please install MetaMask to use this wallet.');
+      if (!wasAlerted) {
+        alert('Please install MetaMask to use this wallet.');
+        setWasAlerted(true)
+      }
     } else {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       setProvider(provider);
@@ -61,20 +71,28 @@ function Landing() {
   };
 
   useEffect(() => {
-    initializeProvider();
+    // Check if MetaMask is installed
+    if (typeof window.ethereum === 'undefined') {
+      if (!wasAlerted) {
+        alert('Please install MetaMask to use this wallet.');
+        setWasAlerted(true)
+      }
+    } else {
+      initializeProvider();
 
-    // Add event listener for account changes
-    window.ethereum.on('accountsChanged', (accounts) => {
-      setIsConnected(accounts.length > 0); // Update isConnected based on the presence of an account
-      setWalletAddress(accounts[0] || '');
-      console.log("Connected", accounts[0]);
-    });
+      // Add event listener for account changes
+      window.ethereum.on('accountsChanged', (accounts) => {
+        setIsConnected(accounts.length > 0); // Update isConnected based on the presence of an account
+        setWalletAddress(accounts[0] || '');
+        console.log("Connected", accounts[0]);
+      });
 
-    return () => {
-      // Cleanup the event listener
-      window.ethereum.removeAllListeners('accountsChanged');
-    };
-  }, []);
+      return () => {
+        // Cleanup the event listener
+        window.ethereum.removeAllListeners('accountsChanged');
+      };
+    }
+  }, [wasAlerted, isConnected]);
 
   // Access the appContext from the useContext hook
   const appContext = useContext(AppContext);
@@ -134,7 +152,7 @@ function Landing() {
         </>
       )}
 
-      
+
     </div>
   );
 }
