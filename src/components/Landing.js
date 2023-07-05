@@ -87,6 +87,7 @@ function Landing() {
         console.log("Connected", accounts[0]);
       });
 
+      
       return () => {
         // Cleanup the event listener
         window.ethereum.removeAllListeners('accountsChanged');
