@@ -4,8 +4,9 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCopy, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-
 import '../css/App.css';
+
+import { ethers } from 'ethers';
 
 library.add(faCopy, faGlobe);
 
@@ -15,8 +16,78 @@ const formatTransactionValue = (value) => {
   return `${formattedValue} TIK`;
 };
 
-
 const Home = () => {
+  const [tiktokHandle, setTiktokHandle] = useState('technicallyweb3');
+  const [isConnected, setIsConnected] = useState(false);
+  const [provider, setProvider] = useState(null);
+  const [networkId, setNetworkId] = useState('');
+  const [walletAddress, setWalletAddress] = useState('');
+
+  const loadDefault = async () => {
+    if (window.ethereum && window.ethereum.selectedAddress) {
+      setIsConnected(true);
+      window.location.href = `/profile?handle=${tiktokHandle}`;
+    } else {
+      window.location.href = '/landing';
+    }
+  };
+
+  const switchToPolygonNetwork = async () => {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x89' }], // Network ID for Polygon (137 in decimal)
+      });
+      console.log('You have successfully switched to the Polygon network');
+    } catch (switchError) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        console.log('This network is not available in your MetaMask, please add it');
+      }
+      console.log('Failed to switch to the network');
+    }
+  };
+
+  const initializeProvider = async () => {
+    // Check if MetaMask is installed
+    if (typeof window.ethereum === 'undefined') {
+      alert('Please install MetaMask to use this wallet.');
+    } else {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(provider);
+
+      // Check if already connected to MetaMask
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      const senderAddress = accounts[0];
+      setIsConnected(!!senderAddress); // Update isConnected based on the presence of an account
+      setWalletAddress(senderAddress);
+      console.log("Connected", senderAddress);
+
+      // Check the network ID and handle network switch/addition
+      const networkId = await window.ethereum.request({ method: 'eth_chainId' });
+      setNetworkId(networkId);
+      if (networkId !== '0x89') { // Network ID for Polygon (change it if using a different network)
+        await switchToPolygonNetwork(); // Await the network switching function
+      }
+    }
+  };
+
+  useEffect(() => {
+    loadDefault();
+
+    // Add event listener for account changes
+    window.ethereum.on('accountsChanged', (accounts) => {
+      setIsConnected(accounts.length > 0); // Update isConnected based on the presence of an account
+      setWalletAddress(accounts[0] || '');
+      console.log("Connected", accounts[0]);
+    });
+
+    return () => {
+      // Cleanup the event listener
+      window.ethereum.removeAllListeners('accountsChanged');
+    };
+  }, []);
+
   const baseURL = 'https://identity-resolver-5ywm7t2p3a-pd.a.run.app';
   const defaultHandle = 'technicallyweb3'; // Default handle
   const [handle, setHandle] = useState(defaultHandle);
@@ -64,10 +135,10 @@ const Home = () => {
   };
 
   const handleTransactionsClick = () => {
-  const handleUrl = `https://polygonscan.com/token/0x359c3ad611e377e050621fb3de1c2f4411684e92?a=${userInfo?.linkedWallet?.address}`;
+    const handleUrl = `https://polygonscan.com/token/0x359c3ad611e377e050621fb3de1c2f4411684e92?a=${userInfo?.linkedWallet?.address}`;
 
-  window.open(handleUrl, '_blank');
-};
+    window.open(handleUrl, '_blank');
+  };
 
   const displayBalance = async () => {
     const userApiUrl = `${baseURL}/user?handle=${handle}`;
@@ -123,17 +194,17 @@ const Home = () => {
 
 
   useEffect(() => {
-  getUserInfo(handle); // Fetch user info with the initial/default handle
-  displayBalance();
-}, [handle]); // Update whenever the handle changes
+    getUserInfo(handle); // Fetch user info with the initial/default handle
+    displayBalance();
+  }, [handle]); // Update whenever the handle changes
 
   return (
     <div>
       <br />
       <br />
-     <h2>TikToken Lookup & Send dApp</h2>
-<br/>
-<br/>
+      <h2>TikToken Lookup & Send dApp</h2>
+      <br />
+      <br />
       <div className="look-container">
         <div className="use-avatar">
           <img className="avatar" src={userInfo?.tiktokUser?.avatarURL} alt="User Avatar" />
@@ -179,65 +250,65 @@ const Home = () => {
             <span className="label">Bio: </span>
             {userInfo?.tiktokUser?.bio}
           </p>
-<div className="social-icons">
-  <a href={`https://www.tiktok.com/${handle}`} target="_blank" rel="noopener noreferrer">
-    <i className="fab fa-tiktok"></i>
-  </a>
-  <a href={`https://www.instagram.com/${userInfo?.tiktokUser?.handle}`} target="_blank" rel="noopener noreferrer">
-    <i className="fab fa-instagram"></i>
-  </a>
- 
-  <i className="fas fa-copy icon" onClick={() => copyToClipboard(userInfo?.linkedWallet?.address)}></i>
-  <a href={`https://polygonscan.com/address/${userInfo?.linkedWallet?.address}`} target="_blank" rel="noopener noreferrer">
-    <i className="fas fa-globe"></i>
-  </a> 
-</div>
+          <div className="social-icons">
+            <a href={`https://www.tiktok.com/${handle}`} target="_blank" rel="noopener noreferrer">
+              <i className="fab fa-tiktok"></i>
+            </a>
+            <a href={`https://www.instagram.com/${userInfo?.tiktokUser?.handle}`} target="_blank" rel="noopener noreferrer">
+              <i className="fab fa-instagram"></i>
+            </a>
+
+            <i className="fas fa-copy icon" onClick={() => copyToClipboard(userInfo?.linkedWallet?.address)}></i>
+            <a href={`https://polygonscan.com/address/${userInfo?.linkedWallet?.address}`} target="_blank" rel="noopener noreferrer">
+              <i className="fas fa-globe"></i>
+            </a>
+          </div>
           <h2>Wallet Balance</h2>
           <div className="balance">{balance}</div>
-          <br /> 
-<button type="button" onClick={() => window.location.href = '/send'} >
+          <br />
+          <button type="button" onClick={() => window.location.href = '/send'} >
             Send TIK
           </button>
         </div>
         <br />
 
-        
-<div className="transaction-container">
-  <h2>Transactions</h2>
-  {transactions.length > 0 ? (
-  <div className="transaction-container">
-    <table className="transaction-table">
-      <thead>
-        <tr>
-          <th>Value</th>
-          <th>Timestamp</th>
-          <th>From</th>
-          <th>To</th>
-        </tr>
-      </thead>
-      <tbody>
-        {transactions.map((transaction) => (
-          <tr className="transaction-row" key={transaction.hash}>
-            <td>{formatTransactionValue(transaction.value)}</td>
-            <td>{new Date(parseInt(transaction.timeStamp) * 1000).toLocaleString()}</td>
-            <td>
-              {transaction.from === userInfo?.linkedWallet?.address
-                ? userInfo?.tiktokUser?.username
-                : transaction.from}
-            </td>
-            <td>
-              {transaction.to === userInfo?.linkedWallet?.address
-                ? userInfo?.tiktokUser?.handle
-                : userInfo?.tiktokUser?.username}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-) : (
-  <p>No transactions found.</p>
-)}
+
+        <div className="transaction-container">
+          <h2>Transactions</h2>
+          {transactions.length > 0 ? (
+            <div className="transaction-container">
+              <table className="transaction-table">
+                <thead>
+                  <tr>
+                    <th>Value</th>
+                    <th>Timestamp</th>
+                    <th>From</th>
+                    <th>To</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.map((transaction) => (
+                    <tr className="transaction-row" key={transaction.hash}>
+                      <td>{formatTransactionValue(transaction.value)}</td>
+                      <td>{new Date(parseInt(transaction.timeStamp) * 1000).toLocaleString()}</td>
+                      <td>
+                        {transaction.from === userInfo?.linkedWallet?.address
+                          ? userInfo?.tiktokUser?.username
+                          : transaction.from}
+                      </td>
+                      <td>
+                        {transaction.to === userInfo?.linkedWallet?.address
+                          ? userInfo?.tiktokUser?.handle
+                          : userInfo?.tiktokUser?.username}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p>No transactions found.</p>
+          )}
 
           <br />
           <button onClick={handleTransactionsClick}>View All Transactions</button>

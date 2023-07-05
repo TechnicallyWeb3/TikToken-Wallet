@@ -3,7 +3,7 @@ import { AppContext } from '../AppContext'; // Replace '../' with the correct pa
 import { ethers } from 'ethers';
 
 function Landing() {
-  const [tiktokHandle, setTiktokHandle] = useState('');
+  const [tiktokHandle, setTiktokHandle] = useState('technicallyweb3');
   const [isConnected, setIsConnected] = useState(false);
   const [provider, setProvider] = useState(null);
   const [networkId, setNetworkId] = useState('');
@@ -12,17 +12,13 @@ function Landing() {
   const handleConnectWallet = async () => {
     try {
       await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+      const senderAddress = accounts[0];
+      if(!!senderAddress) window.location.href = `/profile?handle=${tiktokHandle}`;
     } catch (error) {
       console.log('Failed to connect MetaMask wallet:', error);
     }
   };
-  const handleConnectTiktok = () => {
-    if (tiktokHandle.trim() !== '') {
-        console.log("Logging In")
-        appContext.login(tiktokHandle);
-        window.location.href = `/profile?handle=${tiktokHandle}`;
-    }
-};
 
   const switchToPolygonNetwork = async () => {
     try {
@@ -88,60 +84,57 @@ function Landing() {
     <div className="landing" style={{ margin: '50px', padding: '50px' }}>
       {!isConnected ? (
         <div>
+          <button style={{ position: 'absolute', top: '5px', right: '5px' }} onClick={() => window.location.href = '/profile?handle=technicallyweb3'}>X</button>
+          <div style={{ 'background-color': '#f44336', color: '#fff', padding: '10px', 'font-family': 'Arial, sans-serif', 'font-size': '16px' }}>
+            <strong>Important:</strong> This app is currently in beta version.
+            <br />
+            Please exercise caution when connecting wallets with significant value.
+            <br />
+            We recommend using this app with wallets that do not contain substantial funds.
+          </div>
           <label htmlFor="walletInput" style={{ marginBottom: '5px' }}>
             Connect Web3 Wallet:
           </label>
-          <br/>
-          <br/>
-          <p style={{ fontSize: '15px' }}>Required to send TIK to a TikTok account. To look up user accounts, please use Search or Look-up in the Menu</p>
-<br/>
-<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-  <button
-    type="button"
-    onClick={handleConnectWallet}
-  >
-    Connect Wallet
-  </button>
-</div>
-         <br/>
+          <br />
+          <br />
+          <p style={{ fontSize: '15px' }}>Required to try out all wallet features including sending TIK. If you're just looking to check it out try searching or <a href='/profile?handle=technicallyweb3'>closing this popup</a>.</p>
+          <br />
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <button
+              type="button"
+              onClick={handleConnectWallet}
+            >
+              Connect Wallet
+            </button>
+          </div>
+          <br />
         </div>
       ) : (
         <>
           <div>
-           <br/>
+            <button style={{ position: 'absolute', top: '5px', right: '5px' }} onClick={() => window.location.href = '/'}>X</button>
+            <div style={{ 'background-color': '#f44336', color: '#fff', padding: '10px', 'font-family': 'Arial, sans-serif', 'font-size': '16px' }}>
+              <strong>Important:</strong> This app is currently in beta version.
+              <br />
+              Please exercise caution when connecting wallets with significant value.
+              <br />
+              We recommend using this app with wallets that do not contain substantial funds.
+            </div>
+
+            <br />
             <label htmlFor="walletInput" style={{ marginBottom: '5px' }}>
               Connected:
             </label>
             <p style={{ fontSize: '15px' }}>{walletAddress}</p>
           </div>
-          <br/>
+          <br />
           <button type="button" onClick={() => window.location.href = '/send'} >
             Send TIK
           </button>
         </>
       )}
 
-      <form>
-        <br/>
-        <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '50px' }}>
-          <br/>
-<div>
-          <label htmlFor="tiktokInput" style={{ marginBottom: '5px' }}>
-            Connect TikTok Account:
-          </label>
-</div>
-<br/>
-          <input
-            type="text"
-            id="tiktokInput"
-            placeholder="tiktok_handle"
-            value={appContext.tiktokHandle}
-            onChange={(e) => setTiktokHandle(e.target.value)}
-          />
-
-        </div>
-      </form>
- <button type="button" onClick={handleConnectTiktok}>Connect</button>
+      
     </div>
   );
 }

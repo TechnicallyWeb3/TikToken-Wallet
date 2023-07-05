@@ -75,7 +75,7 @@ const SearchBar = ({ showInput, toggleSearchBar }) => {
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+    <div style={{ position: 'fixed', top: '20px', left: '20px', display: 'flex', alignItems: 'flex-start' }}>
     <button onClick={toggleSearch} style={{ alignSelf: 'flex-start' }}>
       {showInput ? 'X' : 'Search'}
     </button>

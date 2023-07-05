@@ -25,8 +25,8 @@ const Profile = () => {
   const handle = urlHandle || defaultHandle; // Use the URL handle if available, otherwise use the default handle
   const { selfHandle } = useContext(AppContext); // Access selfHandle from AppContext
   const isSelf = handle === selfHandle;
-  console.log("Self:",selfHandle)
-  console.log(isSelf?"This is you!":"This is someone else.");
+  console.log("Self:", selfHandle)
+  console.log(isSelf ? "This is you!" : "This is someone else.");
   const [userInfo, setUserInfo] = useState({});
   const [balance, setBalance] = useState('Loading balance...');
   const [transactions, setTransactions] = useState([]);
@@ -71,10 +71,10 @@ const Profile = () => {
   };
 
   const handleTransactionsClick = () => {
-  const handleUrl = `https://polygonscan.com/token/0x359c3ad611e377e050621fb3de1c2f4411684e92?a=${userInfo?.linkedWallet?.address}`;
+    const handleUrl = `https://polygonscan.com/token/0x359c3ad611e377e050621fb3de1c2f4411684e92?a=${userInfo?.linkedWallet?.address}`;
 
-  window.open(handleUrl, '_blank');
-};
+    window.open(handleUrl, '_blank');
+  };
 
   const displayBalance = async () => {
     const userApiUrl = `${baseURL}/user?handle=${handle}`;
@@ -143,7 +143,7 @@ const Profile = () => {
       <header>
       </header>
 
-      <div style={{ padding: '20px' }}>
+      <div style={{ margin: '20px', padding: '20px' }}>
         <div className="use-avatar">
           <img className="avatar" src={userInfo?.tiktokUser?.avatarURL} alt="User Avatar" />
         </div>
@@ -187,67 +187,70 @@ const Profile = () => {
           <p>
             {userInfo?.tiktokUser?.bio}
           </p>
-<div className="social-icons">
-  <a href={`https://www.tiktok.com/${handle}`} target="_blank" rel="noopener noreferrer">
-    <i className="fab fa-tiktok"></i>
-  </a>
-  <a href={`https://www.instagram.com/${userInfo?.tiktokUser?.handle}`} target="_blank" rel="noopener noreferrer">
-    <i className="fab fa-instagram"></i>
-  </a>
- 
-  <i className="fas fa-copy icon" onClick={() => copyToClipboard(userInfo?.linkedWallet?.address)}></i>
-  <a href={`https://polygonscan.com/address/${userInfo?.linkedWallet?.address}`} target="_blank" rel="noopener noreferrer">
-    <i className="fas fa-globe"></i>
-  </a> 
-</div>
+          <div className="social-icons">
+            <a href={`https://www.tiktok.com/@${handle}`} target="_blank" rel="noopener noreferrer">
+              <i className="fab fa-tiktok"></i>
+            </a>
+            <a href={`/send?to=${userInfo?.tiktokUser?.handle}`} rel="noopener noreferrer">
+              <i className="fas fa-paper-plane"></i>
+            </a>
+
+            <i className="fas fa-copy icon" onClick={() => copyToClipboard(userInfo?.linkedWallet?.address)}></i>
+            <a href={`https://polygonscan.com/address/${userInfo?.linkedWallet?.address}`} target="_blank" rel="noopener noreferrer">
+              <i className="fas fa-globe"></i>
+            </a>
+          </div>
           <h2>Wallet Balance</h2>
           <div className="balance">{balance}</div>
-          <br />
-          <button onClick={handleSendClick}>Send TIK</button>
         </div>
         <br />
 
-        
-<div className="transaction-container">
-  <h2>Transactions</h2>
-  {transactions.length > 0 ? (
-  <div className="transaction-container">
-    <table className="transaction-table">
-      <thead>
-        <tr>
-          <th>Value</th>
-          <th>Timestamp</th>
-          <th>From</th>
-          <th>To</th>
-        </tr>
-      </thead>
-      <tbody>
-        {transactions.map((transaction) => (
-          <tr className="transaction-row" key={transaction.hash}>
-            <td>{formatTransactionValue(transaction.value)}</td>
-            <td>{new Date(parseInt(transaction.timeStamp) * 1000).toLocaleString()}</td>
-            <td>
-              {transaction.from === userInfo?.linkedWallet?.address
-                ? userInfo?.tiktokUser?.username
-                : transaction.from}
-            </td>
-            <td>
-              {transaction.to === userInfo?.linkedWallet?.address
-                ? userInfo?.tiktokUser?.handle
-                : userInfo?.tiktokUser?.username}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-) : (
-  <p>No transactions found.</p>
-)}
+
+        {userInfo?.linkedWallet?.isRegistered ? (<div className="transaction-container">
+          <h2>Transactions</h2>
+          {transactions.length > 0 ? (
+            <div className="transaction-container">
+              <table className="transaction-table">
+                <thead>
+                  <tr>
+                    <th>Value</th>
+                    <th>Timestamp</th>
+                    <th>From</th>
+                    <th>To</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.map((transaction) => (
+                    <tr className="transaction-row" key={transaction.hash}>
+                      <td>{formatTransactionValue(transaction.value)}</td>
+                      <td>{new Date(parseInt(transaction.timeStamp) * 1000).toLocaleString()}</td>
+                      <td>
+                        {transaction.from === userInfo?.linkedWallet?.address
+                          ? userInfo?.tiktokUser?.username
+                          : transaction.from}
+                      </td>
+                      <td>
+                        {transaction.to === userInfo?.linkedWallet?.address
+                          ? userInfo?.tiktokUser?.handle
+                          : userInfo?.tiktokUser?.username}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p>No transactions found.</p>
+          )}
 
           <br />
           <button onClick={handleTransactionsClick}>View All Transactions</button>
-        </div>
+        </div>):
+        (<div>
+          <p>Please Send {userInfo?.tiktokUser?.username} the following message:<br/>{userInfo?.linkedWallet?.copyMessage}</p>
+          <button onClick={() => copyToClipboard(userInfo?.linkedWallet?.copyMessage)}>Copy Message</button>
+        </div>)}
+
       </div>
 
       <br />
@@ -259,6 +262,12 @@ const Profile = () => {
           Made with <span className="heart">&hearts;</span> by{' '}
           <a href="https://michaelh.org" target="_blank" rel="noopener noreferrer">
             MichaelHDesigns
+          </a>
+        </p>
+        <p>
+          with contributions from{' '}
+          <a href="/profile?handle=mancinotech">
+            Mancino Technologies
           </a>
         </p>
         <p>

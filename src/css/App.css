@@ -53,6 +53,22 @@
   cursor: pointer;
   box-shadow: 0 0 10px black; /* Updated shadow color */
 }
+.search-bar {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: inline-block;
+}
+
+.search-bar button {
+  background-color: blue;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  box-shadow: 0 0 10px black; /* Updated shadow color */
+}
 
 .dropdown-menu {
   position: absolute;
