@@ -100,10 +100,13 @@ function Landing() {
 
   return (
 
-    <div className="landing" style={{ margin: '50px', padding: '50px' }}>
+    <div style={{ padding: '50px' }}>
       {!isConnected ? (
         <div>
-          <button style={{ position: 'absolute', top: '5px', right: '5px' }} onClick={() => window.location.href = '/profile?handle=technicallyweb3'}>X</button>
+          <br />
+          <br />
+          <br />
+          <button style={{ position: 'fixed', top: '5px', right: '5px' }} onClick={() => window.location.href = '/profile?handle=technicallyweb3'}>X</button>
           <div style={{ 'background-color': '#f44336', color: '#fff', padding: '10px', 'font-family': 'Arial, sans-serif', 'font-size': '16px' }}>
             <strong>Important:</strong> This app is currently in beta version.
             <br />
