@@ -100,16 +100,16 @@ function Landing() {
 
   return (
 
-    <div className="landing" style={{ padding: '50px' }}>
+    <div className="landing-container">
       {!isConnected ? (
-        <div>
-          <button style={{ position: 'absolute', top: '5px', right: '5px' }} onClick={() => window.location.href = '/profile?handle=technicallyweb3'}>X</button>
+        <div className="landing">
+          <button className="close-button" onClick={() => window.location.href = '/profile?handle=technicallyweb3'}>X</button>
           <div style={{ 'background-color': '#f44336', color: '#fff', padding: '10px', 'font-family': 'Arial, sans-serif', 'font-size': '16px' }}>
             <strong>Important:</strong> This app is currently in beta!
             <br />
             Please exercise caution when connecting wallets.
             <br />
-            We recommend using wallets that do not contain substantial amounts funds! Not just on this project!
+            We recommend using wallets that do not contain substantial amounts funds! Not just on this project
           </div>
           <label htmlFor="walletInput" style={{ marginBottom: '5px' }}>
             Connect Web3 Wallet:

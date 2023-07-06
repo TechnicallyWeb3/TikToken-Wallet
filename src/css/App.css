@@ -118,19 +118,28 @@ body {
   padding: 20px;
 }
 
+.landing-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
 .landing {
+  position: relative; /* Add position relative to establish a new stacking context */
   background-color: #fff;
   padding: 35px;
   max-width: 600px;
-  margin: 10px auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7), 0 0 5px rgba(0, 0, 0, 0.7);
   border-radius: 15px;
-  /* overflow: hidden; */
-  position: fixed;
-  /* top: 50%; */
-  /* left: 40%; */
-  /* transform: translate(-50%, -50%); */
 }
+
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
 
 .container {
   background-color: #fff;
@@ -280,18 +289,6 @@ button:hover {
   /* Increased shadow size on hover */
 }
 
-.social-icons {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  color: blue;
-  margin-top: 0px;
-  font-size: 20px;
-  /* Adjust the font size to increase or decrease the icon size */
-  transform: scale(1.5);
-  /* Adjust the scale factor to make the icons bigger or smaller */
-}
-
 .social-media {
   display: flex;
   justify-content: center;
@@ -313,7 +310,8 @@ button:hover {
 }
 
 .social-media-buttons a {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   margin: 0 10px;
   text-decoration: none;
 }
@@ -323,11 +321,15 @@ button:hover {
   color: #000;
   padding: 5px;
   border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  transition: transform 0.3s ease;
 }
 
 .social-media-buttons img:hover {
   transform: scale(1.2);
 }
+
 
 .user-details {
   color: #000;
