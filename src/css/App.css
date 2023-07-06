@@ -283,7 +283,7 @@ button:hover {
 .social-icons {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 40px;
   color: blue;
   margin-top: 0px;
   font-size: 20px;
