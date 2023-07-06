@@ -32,6 +32,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -51,8 +52,10 @@
   border-radius: 20px;
   padding: 10px 20px;
   cursor: pointer;
-  box-shadow: 0 0 10px black; /* Updated shadow color */
+  box-shadow: 0 0 10px black;
+  /* Updated shadow color */
 }
+
 .search-bar {
   position: fixed;
   top: 20px;
@@ -67,7 +70,8 @@
   border-radius: 20px;
   padding: 10px 20px;
   cursor: pointer;
-  box-shadow: 0 0 10px black; /* Updated shadow color */
+  box-shadow: 0 0 10px black;
+  /* Updated shadow color */
 }
 
 .dropdown-menu {
@@ -83,7 +87,8 @@
   color: #fff;
   border: none;
   border-radius: 20px;
-  box-shadow: 0 0 10px black; /* Updated shadow color */
+  box-shadow: 0 0 10px black;
+  /* Updated shadow color */
 }
 
 .dropdown-menu li {
@@ -106,25 +111,25 @@
 }
 
 body {
-      background-color: #fff;
-      color: #000;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
+  background-color: #fff;
+  color: #000;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+}
 
 .landing {
   background-color: #fff;
-  padding: 20px;
-  max-width: 500px;
-  margin: 0 auto;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.7), 0 0 10px rgba(0, 0, 0, 0.7);
+  padding: 35px;
+  max-width: 600px;
+  margin: 10px auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7), 0 0 5px rgba(0, 0, 0, 0.7);
   border-radius: 15px;
-  overflow: hidden;
+  /* overflow: hidden; */
   position: fixed;
-  top: 50%;
-  left: 45%;
-  transform: translate(-50%, -50%);
+  /* top: 50%; */
+  /* left: 40%; */
+  /* transform: translate(-50%, -50%); */
 }
 
 .container {
@@ -157,18 +162,23 @@ body {
 
 .dynamic-width {
   display: inline-block;
-  min-width: 150px; /* Set a minimum width to prevent the container from becoming too small */
-  max-width: 100%; /* Set a maximum width to allow the container to expand as needed */
-  word-break: break-word; /* Break long text into multiple lines if necessary */
+  min-width: 150px;
+  /* Set a minimum width to prevent the container from becoming too small */
+  max-width: 100%;
+  /* Set a maximum width to allow the container to expand as needed */
+  word-break: break-word;
+  /* Break long text into multiple lines if necessary */
 }
 
 .transaction-container {
-  overflow-x: auto; /* Enable horizontal scrolling for the table if needed */
+  overflow-x: auto;
+  /* Enable horizontal scrolling for the table if needed */
 }
 
 .transaction-table {
   width: 100%;
-  table-layout: fixed; /* Fix the table layout */
+  table-layout: fixed;
+  /* Fix the table layout */
   border-collapse: collapse;
 }
 
@@ -176,9 +186,12 @@ body {
 .transaction-table td {
   padding: 8px;
   border-bottom: 1px solid #ddd;
-  white-space: nowrap; /* Prevent line wrapping */
-  overflow: hidden; /* Hide any overflowing content */
-  text-overflow: ellipsis; /* Display ellipsis (...) for truncated text */
+  white-space: nowrap;
+  /* Prevent line wrapping */
+  overflow: hidden;
+  /* Hide any overflowing content */
+  text-overflow: ellipsis;
+  /* Display ellipsis (...) for truncated text */
 }
 
 .transaction-row:hover {
@@ -189,9 +202,9 @@ body {
   background-color: #f9f9f9;
 }
 
-.heart{
+.heart {
   color: red;
-  
+
 }
 
 h1 {
@@ -205,18 +218,18 @@ a {
 }
 
 
-    label {
-      color: #000;
-      font-weight: bold;
-      margin-right: 15px;
-      margin-top: 10px;
-    }
-   
-    label[for="formatSelect"] {
-      color: #fff;
-      margin-right: 70px;
-      margin-top: 10px;
-    }
+label {
+  color: #000;
+  font-weight: bold;
+  margin-right: 15px;
+  margin-top: 10px;
+}
+
+label[for="formatSelect"] {
+  color: #fff;
+  margin-right: 70px;
+  margin-top: 10px;
+}
 
 .blue-icon {
   color: blue;
@@ -225,8 +238,10 @@ a {
 .icon {
   color: blue;
   margin-top: 5px;
-  font-size: 12px; /* Adjust the font size to increase or decrease the icon size */
-  transform: scale(1.5); /* Adjust the scale factor to make the icons bigger or smaller */
+  font-size: 12px;
+  /* Adjust the font size to increase or decrease the icon size */
+  transform: scale(1.5);
+  /* Adjust the scale factor to make the icons bigger or smaller */
 }
 
 .background {
@@ -241,10 +256,13 @@ a {
   border-radius: 50%;
   object-fit: cover;
 }
+
 input[type="text"] {
-  padding: 10px 5px; /* Increase the top padding value to create more space */
+  padding: 10px 5px;
+  /* Increase the top padding value to create more space */
   margin-left: 15px;
 }
+
 button {
   padding: 10px 20px;
   margin-left: 15px;
@@ -253,21 +271,25 @@ button {
   color: white;
   border: none;
   border-radius: 20px;
-  box-shadow: 0 0 10px black; /* Updated shadow color */
+  box-shadow: 0 0 10px black;
+  /* Updated shadow color */
 }
 
 button:hover {
-  box-shadow: 0 0 20px black; /* Increased shadow size on hover */
+  box-shadow: 0 0 20px black;
+  /* Increased shadow size on hover */
 }
 
 .social-icons {
   display: flex;
   justify-content: center;
   gap: 10px;
-color: blue;
+  color: blue;
   margin-top: 0px;
-  font-size: 20px; /* Adjust the font size to increase or decrease the icon size */
-  transform: scale(1.5); /* Adjust the scale factor to make the icons bigger or smaller */
+  font-size: 20px;
+  /* Adjust the font size to increase or decrease the icon size */
+  transform: scale(1.5);
+  /* Adjust the scale factor to make the icons bigger or smaller */
 }
 
 .social-media {
@@ -320,8 +342,10 @@ color: blue;
 
 .user-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Adjust the number to control the number of columns */
-  grid-gap: 20px; /* Adjust the gap between grid items */
+  grid-template-columns: repeat(4, 1fr);
+  /* Adjust the number to control the number of columns */
+  grid-gap: 20px;
+  /* Adjust the gap between grid items */
 }
 
 .user-profile {
