@@ -101,60 +101,58 @@ function Landing() {
   return (
 
     <div className="landing-container">
-      {!isConnected ? (
-        <div className="landing">
-          <button className="close-button" onClick={() => window.location.href = '/profile?handle=technicallyweb3'}>X</button>
-          <div style={{ 'background-color': '#f44336', color: '#fff', padding: '10px', 'font-family': 'Arial, sans-serif', 'font-size': '16px' }}>
-            <strong>Important:</strong> This app is currently in beta!
-            <br />
-            Please exercise caution when connecting wallets.
-            <br />
-            We recommend using wallets that do not contain substantial amounts funds! Not just on this project
-          </div>
-          <label htmlFor="walletInput" style={{ marginBottom: '5px' }}>
-            Connect Web3 Wallet:
-          </label>
+    {!isConnected ? (
+      <div className="landing">
+        <button className="close-button" onClick={() => window.location.href = '/profile?handle=technicallyweb3'}>X</button>
+        <div style={{ backgroundColor: '#f44336', color: '#fff', padding: '10px', fontFamily: 'Arial, sans-serif', fontSize: '16px' }}>
+          <strong>Important:</strong> This app is currently in beta!
           <br />
+          Please exercise caution when connecting wallets.
           <br />
-          <p style={{ fontSize: '15px' }}>Required to try out all wallet features including sending TIK. If you're just looking to check it out try searching or <a href='/profile?handle=technicallyweb3'>closing this popup</a>.</p>
-          <br />
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <button
-              type="button"
-              onClick={handleConnectWallet}
-            >
-              Connect Wallet
-            </button>
-          </div>
-          <br />
+          We recommend using wallets that do not contain substantial amounts funds! Not just on this project
         </div>
-      ) : (
-        <>
-          <div>
-            <button style={{ position: 'absolute', top: '5px', right: '5px' }} onClick={() => window.location.href = '/'}>X</button>
-            <div style={{ 'background-color': '#f44336', color: '#fff', padding: '10px', 'font-family': 'Arial, sans-serif', 'font-size': '16px' }}>
-              <strong>Important:</strong> This app is currently in beta version.
-              <br />
-              Please exercise caution when connecting wallets with significant value.
-              <br />
-              We recommend using this app with wallets that do not contain substantial funds.
-            </div>
-
-            <br />
-            <label htmlFor="walletInput" style={{ marginBottom: '5px' }}>
-              Connected:
-            </label>
-            <p style={{ fontSize: '15px' }}>{walletAddress}</p>
-          </div>
-          <br />
-          <button type="button" onClick={() => window.location.href = '/send'} >
-            Send TIK
+        <label htmlFor="walletInput" style={{ marginBottom: '5px' }}>
+          Connect Web3 Wallet:
+        </label>
+        <br />
+        <br />
+        <p style={{ fontSize: '15px' }}>Required to try out all wallet features including sending TIK. If you're just looking to check it out try searching or <a href='/profile?handle=technicallyweb3'>closing this popup</a>.</p>
+        <br />
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <button
+            type="button"
+            onClick={handleConnectWallet}
+          >
+            Connect Wallet
           </button>
-        </>
-      )}
-
-
-    </div>
+        </div>
+        <br />
+      </div>
+    ) : (
+      <div className="landing">
+        <button className="close-button" onClick={() => window.location.href = '/'}>X</button>
+        <div style={{ backgroundColor: '#f44336', color: '#fff', padding: '10px', fontFamily: 'Arial, sans-serif', fontSize: '16px' }}>
+          <strong>Important:</strong> This app is currently in beta version.
+          <br />
+          Please exercise caution when connecting wallets with significant value.
+          <br />
+          We recommend using this app with wallets that do not contain substantial funds.
+        </div>
+  
+        <br />
+        <label htmlFor="walletInput" style={{ marginBottom: '5px' }}>
+          Connected:
+        </label>
+        <p style={{ fontSize: '15px' }}>{walletAddress}</p>
+  
+        <br />
+        <button type="button" onClick={() => window.location.href = '/send'} >
+          Send TIK
+        </button>
+      </div>
+    )}
+  </div>
+  
   );
 }
 

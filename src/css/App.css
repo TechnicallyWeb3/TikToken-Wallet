@@ -288,7 +288,21 @@ button:hover {
   box-shadow: 0 0 20px black;
   /* Increased shadow size on hover */
 }
+.social-icons {
+  display: flex;
+  justify-content: center;
+  color: blue;
+  margin-top: 0px;
+  font-size: 20px;
+  /* Adjust the font size to increase or decrease the icon size */
+  transform: scale(1.5);
+  /* Adjust the scale factor to make the icons bigger or smaller */
+}
 
+.social-icons > * + * {
+  margin-left: 40px;
+  /* Adjust the margin value to set the desired gap between the elements */
+}
 .social-media {
   display: flex;
   justify-content: center;
