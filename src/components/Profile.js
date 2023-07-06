@@ -247,7 +247,7 @@ const Profile = () => {
           <button onClick={handleTransactionsClick}>View All Transactions</button>
         </div>):
         (<div>
-          <p>Please Send {userInfo?.tiktokUser?.username} the following message:<br/>{userInfo?.linkedWallet?.copyMessage}</p>
+          <p><strong>Please Send {userInfo?.tiktokUser?.username} the following message:</strong><br/>{userInfo?.linkedWallet?.copyMessage}</p>
           <button onClick={() => copyToClipboard(userInfo?.linkedWallet?.copyMessage)}>Copy Message</button>
         </div>)}
 
@@ -283,3 +283,4 @@ const Profile = () => {
 
 export { formatTransactionValue };
 export default Profile;
+//heygoogoo
